@@ -9,66 +9,27 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  lint-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Opcional: Instala y corre ESLint si quieres revisar el código JavaScript
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install ESLint
+        run: npm install eslint
 
-      - name: Run unit tests
-        run: npm test
+      - name: Run ESLint
+        run: npx eslint componentns/*.js ruedavida.js
 
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      # Despliegue automático en GitHub Pages (puedes cambiarlo por Netlify, Heroku, etc.)
-      - name: Build project
-        run: npm run build
-
+      # No hay build, así que directamente despliega (ajusta el directorio según dónde esté tu index.html)
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
-
-  integration-tests:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run integration tests
-        run: npm run test:integration # Modifica este comando según tu proyecto
-
-      - name: Lint code
-        run: npm run lint # Modifica si tu proyecto tiene un comando de linting
+          publish_dir: ./
